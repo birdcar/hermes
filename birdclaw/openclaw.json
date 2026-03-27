@@ -78,7 +78,7 @@
     "citations": "auto",
     "qmd": {
       "command": "qmd",
-      "searchMode": "search",
+      "searchMode": "query",
       "includeDefaultMemory": true,
       "update": {
         "interval": "5m",
