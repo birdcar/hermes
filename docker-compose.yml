@@ -69,8 +69,8 @@ services:
       - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
       - PAPERCLIP_DEPLOYMENT_MODE=authenticated
       - PAPERCLIP_DEPLOYMENT_EXPOSURE=private
-      - PAPERCLIP_PUBLIC_URL=${SERVICE_FQDN_BIRDCLIP_3100}
-      - BETTER_AUTH_URL=${SERVICE_FQDN_BIRDCLIP_3100}
+      - PAPERCLIP_PUBLIC_URL=https://paperclip.home.birdcar.dev
+      - BETTER_AUTH_URL=https://paperclip.home.birdcar.dev
       # Claude (Max subscription)
       - CLAUDE_CODE_OAUTH_TOKEN=${CLAUDE_CODE_OAUTH_TOKEN}
       - ANTHROPIC_API_KEY=${CLAUDE_CODE_OAUTH_TOKEN}
