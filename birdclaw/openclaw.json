@@ -115,7 +115,8 @@
     "bind": "lan",
     "controlUi": {
       "enabled": true,
-      "allowInsecureAuth": false
+      "allowInsecureAuth": false,
+      "allowedOrigins": ["https://birdclaw.home.birdcar.dev"]
     },
     "auth": {
       "mode": "token",

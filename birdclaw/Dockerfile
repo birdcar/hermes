@@ -19,7 +19,9 @@ RUN curl -fsSL https://bun.sh/install | bash \
 ENV PATH="/usr/local/bun/bin:${PATH}"
 
 # Install qmd CLI (QMD memory backend — @tobilu/qmd on npm)
-RUN bun install -g @tobilu/qmd
+# Installs as root so the binary lands in a global path accessible to all users
+RUN bun install -g @tobilu/qmd && \
+    ln -sf $(find /root -name qmd -type f 2>/dev/null | head -1) /usr/local/bin/qmd
 
 # Pre-create volume mount targets with correct ownership
 RUN mkdir -p /home/node/.openclaw/extensions \
