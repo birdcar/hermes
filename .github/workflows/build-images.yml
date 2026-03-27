@@ -73,8 +73,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-birdclaw, build-birdclip]
     steps:
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
       - name: Trigger Coolify redeploy
         run: |
           curl -fsSL -X POST \
-            "${{ secrets.COOLIFY_API_URL }}/deploy?uuid=${{ secrets.COOLIFY_SERVICE_UUID }}" \
+            "http://100.108.157.126:8000/api/v1/deploy?uuid=${{ secrets.COOLIFY_SERVICE_UUID }}" \
             -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}"
