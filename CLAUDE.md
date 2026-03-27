@@ -4,7 +4,7 @@
 
 Hermes is a monorepo containing custom Docker images and deployment config for two AI services:
 
-- **BirdClaw** (`birdclaw/`) -- Custom OpenClaw image extending `ghcr.io/openclaw/openclaw:latest` with bun.js, gh CLI, qmd memory backend, and a pre-seeded config
+- **BirdClaw** (`birdclaw/`) -- Custom OpenClaw image extending `ghcr.io/openclaw/openclaw:latest` with bun.js, gh CLI, qmd memory backend (`@tobilu/qmd` on npm), and a pre-seeded config
 - **BirdClip** (`birdclip/`) -- Custom Paperclip image built from source via `paperclipai/paperclip`
 
 These deploy as a single Coolify Docker Compose service with 4 containers: birdclaw, birdclaw_browser (Chromium CDP sidecar), birdclip, birdclip_db (PostgreSQL).
