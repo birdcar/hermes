@@ -79,10 +79,8 @@ services:
       - PAPERCLIP_DEPLOYMENT_EXPOSURE=private
       - PAPERCLIP_PUBLIC_URL=${SERVICE_URL_BIRDCLIP_3100}
       - BETTER_AUTH_URL=${SERVICE_URL_BIRDCLIP_3100}
-      # Claude (Max subscription)
+      # Claude (Max subscription — uses claude-code CLI, not direct API)
       - CLAUDE_CODE_OAUTH_TOKEN=${CLAUDE_CODE_OAUTH_TOKEN}
-      - ANTHROPIC_API_KEY=${CLAUDE_CODE_OAUTH_TOKEN}
-      - CLAUDE_CODE_USE_ANTHROPIC_API=1
       # OpenClaw connection
       - OPENCLAW_GATEWAY_URL=http://birdclaw:18789
       - OPENCLAW_HOOKS_TOKEN=${OPENCLAW_HOOKS_TOKEN}
