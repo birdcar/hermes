@@ -1,0 +1,144 @@
+{
+  "logging": { "redactSensitive": "tools" },
+  "browser": {
+    "evaluateEnabled": true,
+    "remoteCdpTimeoutMs": 1500,
+    "remoteCdpHandshakeTimeoutMs": 3000,
+    "defaultProfile": "openclaw",
+    "snapshotDefaults": { "mode": "efficient" },
+    "ssrfPolicy": {
+      "dangerouslyAllowPrivateNetwork": false,
+      "hostnameAllowlist": ["*.home.birdcar.dev"]
+    }
+  },
+  "auth": {
+    "profiles": {
+      "anthropic:default": {
+        "provider": "anthropic",
+        "mode": "oauth",
+        "email": "__OPENCLAW_AUTH_EMAIL__"
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": { "primary": "anthropic/claude-opus-4-6" },
+      "models": { "anthropic/claude-opus-4-6": { "alias": "opus" } },
+      "workspace": "/home/node/.openclaw/workspace",
+      "maxConcurrent": 4,
+      "subagents": { "maxConcurrent": 8 },
+      "sandbox": {
+        "mode": "non-main",
+        "backend": "docker",
+        "scope": "agent",
+        "workspaceAccess": "rw",
+        "docker": {
+          "readOnlyRoot": true,
+          "network": "none",
+          "capDrop": ["ALL"],
+          "user": "1000:1000"
+        }
+      }
+    }
+  },
+  "messages": {
+    "ackReactionScope": "group-mentions",
+    "tts": {
+      "auto": "tagged",
+      "provider": "elevenlabs",
+      "elevenlabs": {
+        "voiceId": "__ELEVENLABS_VOICE_ID__"
+      }
+    }
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto",
+    "bash": false,
+    "config": false
+  },
+  "session": { "dmScope": "per-channel-peer" },
+  "channels": {
+    "discord": {
+      "enabled": true,
+      "groupPolicy": "allowlist",
+      "dm": {
+        "enabled": true,
+        "policy": "allowlist",
+        "allowFrom": ["__DISCORD_OWNER_ID__"]
+      },
+      "guilds": {
+        "__DISCORD_GUILD_ID__": {
+          "requireMention": true,
+          "users": ["__DISCORD_OWNER_ID__"]
+        }
+      },
+      "execApprovals": {
+        "enabled": true,
+        "approvers": ["__DISCORD_OWNER_ID__"]
+      }
+    }
+  },
+  "talk": {
+    "voiceId": "__ELEVENLABS_VOICE_ID__"
+  },
+  "memory": {
+    "backend": "qmd",
+    "citations": "auto",
+    "qmd": {
+      "command": "qmd",
+      "searchMode": "query",
+      "includeDefaultMemory": true,
+      "update": {
+        "interval": "5m",
+        "onBoot": true,
+        "waitForBootSync": false,
+        "embedInterval": "1h"
+      },
+      "limits": {
+        "maxResults": 6,
+        "maxSnippetChars": 2000,
+        "maxInjectedChars": 8000,
+        "timeoutMs": 4000
+      }
+    }
+  },
+  "tools": {
+    "profile": "full",
+    "elevated": {
+      "enabled": true,
+      "allowFrom": {
+        "discord": ["__DISCORD_OWNER_ID__"]
+      }
+    },
+    "loopDetection": {
+      "enabled": true,
+      "warningThreshold": 5,
+      "criticalThreshold": 10,
+      "globalCircuitBreakerThreshold": 50
+    }
+  },
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "bind": "lan",
+    "controlUi": {
+      "enabled": true,
+      "allowInsecureAuth": false
+    },
+    "auth": {
+      "mode": "token",
+      "rateLimit": {
+        "maxAttempts": 5,
+        "windowMs": 60000,
+        "lockoutMs": 300000
+      }
+    },
+    "tailscale": { "mode": "off", "resetOnExit": false }
+  },
+  "skills": { "install": { "nodeManager": "bun" } },
+  "plugins": {
+    "entries": { "discord": { "enabled": true } },
+    "load": { "paths": ["/home/node/.openclaw/extensions"] }
+  }
+}

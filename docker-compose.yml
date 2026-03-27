@@ -1,0 +1,121 @@
+services:
+  birdclaw:
+    image: ghcr.io/birdcar/hermes/birdclaw:latest
+    environment:
+      # Auth
+      - ANTHROPIC_API_KEY=${CLAUDE_CODE_OAUTH_TOKEN}
+      - CLAUDE_CODE_OAUTH_TOKEN=${CLAUDE_CODE_OAUTH_TOKEN}
+      # Gateway
+      - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
+      - OPENCLAW_GATEWAY_PORT=18789
+      - OPENCLAW_GATEWAY_BIND=lan
+      # Browser sidecar
+      - BROWSER_CDP_URL=http://birdclaw_browser:9222
+      - BROWSER_EVALUATE_ENABLED=true
+      - BROWSER_DEFAULT_PROFILE=openclaw
+      - BROWSER_SNAPSHOT_MODE=efficient
+      - BROWSER_REMOTE_TIMEOUT_MS=1500
+      - BROWSER_REMOTE_HANDSHAKE_TIMEOUT_MS=3000
+      # Discord
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
+      # TTS
+      - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY}
+      # Hooks (for Paperclip integration)
+      - HOOKS_ENABLED=true
+      - HOOKS_TOKEN=${OPENCLAW_HOOKS_TOKEN}
+      # Timezone
+      - TZ=America/Chicago
+      # Logging
+      - OPENCLAW_LOG_LEVEL=info
+    volumes:
+      - birdclaw-config:/home/node/.openclaw
+      - birdclaw-workspace:/home/node/.openclaw/workspace
+      - birdclaw-extensions:/home/node/.openclaw/extensions
+    ports:
+      - "127.0.0.1:18789:18789"
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://127.0.0.1:18789/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 45s
+    depends_on:
+      birdclaw_browser:
+        condition: service_healthy
+    restart: unless-stopped
+
+  birdclaw_browser:
+    image: coollabsio/openclaw-browser:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+      - CHROME_CLI=--remote-debugging-port=9222
+    volumes:
+      - birdclaw-browser-data:/config
+    shm_size: "2g"
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c ':> /dev/tcp/127.0.0.1/9222' || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  birdclip:
+    image: ghcr.io/birdcar/hermes/birdclip:latest
+    environment:
+      # Auth
+      - SERVICE_FQDN_BIRDCLIP_3100
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
+      - PAPERCLIP_DEPLOYMENT_MODE=authenticated
+      - PAPERCLIP_DEPLOYMENT_EXPOSURE=private
+      - PAPERCLIP_PUBLIC_URL=${SERVICE_FQDN_BIRDCLIP_3100}
+      - BETTER_AUTH_URL=${SERVICE_FQDN_BIRDCLIP_3100}
+      # Claude (Max subscription)
+      - CLAUDE_CODE_OAUTH_TOKEN=${CLAUDE_CODE_OAUTH_TOKEN}
+      - ANTHROPIC_API_KEY=${CLAUDE_CODE_OAUTH_TOKEN}
+      - CLAUDE_CODE_USE_ANTHROPIC_API=1
+      # OpenClaw connection
+      - OPENCLAW_GATEWAY_URL=http://birdclaw:18789
+      - OPENCLAW_HOOKS_TOKEN=${OPENCLAW_HOOKS_TOKEN}
+      # Database
+      - DATABASE_URL=postgres://paperclip:paperclip@birdclip_db:5432/paperclip
+      # Server
+      - HOST=0.0.0.0
+      - PORT=3100
+    volumes:
+      - birdclip-data:/paperclip
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://127.0.0.1:3100/health"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      birdclip_db:
+        condition: service_healthy
+      birdclaw:
+        condition: service_healthy
+    restart: unless-stopped
+
+  birdclip_db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: paperclip
+      POSTGRES_PASSWORD: paperclip
+      POSTGRES_DB: paperclip
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U paperclip -d paperclip"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+    volumes:
+      - birdclip-pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  birdclaw-config:
+  birdclaw-workspace:
+  birdclaw-extensions:
+  birdclaw-browser-data:
+  birdclip-data:
+  birdclip-pgdata:

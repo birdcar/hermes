@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "defaults": {
+    "security": "allowlist",
+    "ask": "on-miss",
+    "askFallback": "deny",
+    "autoAllowSkills": false
+  },
+  "agents": {
+    "main": {
+      "security": "allowlist",
+      "ask": "on-miss",
+      "askFallback": "deny",
+      "autoAllowSkills": true,
+      "allowlist": [
+        { "pattern": "docker *" },
+        { "pattern": "docker-compose *" },
+        { "pattern": "uname *" },
+        { "pattern": "uptime" },
+        { "pattern": "df *" },
+        { "pattern": "free *" },
+        { "pattern": "top -bn1" },
+        { "pattern": "ps aux" },
+        { "pattern": "ping *" },
+        { "pattern": "/usr/local/bin/homelab-curl *" },
+        { "pattern": "dig *" },
+        { "pattern": "nslookup *" },
+        { "pattern": "ss -tlnp" },
+        { "pattern": "tailscale status*" },
+        { "pattern": "tailscale ping *" },
+        { "pattern": "apt list *" },
+        { "pattern": "apt search *" },
+        { "pattern": "apt show *" },
+        { "pattern": "journalctl *" },
+        { "pattern": "systemctl status *" }
+      ]
+    }
+  }
+}

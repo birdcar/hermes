@@ -1,0 +1,15 @@
+[Unit]
+Description=BirdClaw OpenClaw Node
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=%h/.bun/bin/openclaw node run --host 127.0.0.1 --port 18789 --node-id coolify-host --display-name "Coolify Host Server"
+Environment=HOME=%h
+Environment=PATH=%h/.bun/bin:/usr/local/bin:/usr/bin:/bin
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target

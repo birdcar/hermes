@@ -1,0 +1,7 @@
+{
+  "description": "Domains that homelab-curl is allowed to reach. Supports wildcards via leading *. prefix.",
+  "allowed": [
+    "*.birdcar.dev",
+    "birdcar.dev"
+  ]
+}

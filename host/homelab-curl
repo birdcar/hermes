@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/homelab-curl/allowed-domains.json"
+
+if [[ ! -f "$CONFIG" ]]; then
+  echo "homelab-curl: config not found at $CONFIG" >&2
+  exit 1
+fi
+
+# Extract the URL from curl arguments (first arg that looks like a URL)
+URL=""
+for arg in "$@"; do
+  if [[ "$arg" =~ ^https?:// ]]; then
+    URL="$arg"
+    break
+  fi
+done
+
+if [[ -z "$URL" ]]; then
+  echo "homelab-curl: no URL found in arguments" >&2
+  echo "Usage: homelab-curl [curl-options] <url>" >&2
+  exit 1
+fi
+
+# Extract hostname from URL
+HOSTNAME=$(echo "$URL" | sed -E 's|^https?://([^/:]+).*|\1|')
+
+if [[ -z "$HOSTNAME" ]]; then
+  echo "homelab-curl: could not parse hostname from $URL" >&2
+  exit 1
+fi
+
+# Check hostname against allowed domains
+ALLOWED=false
+while IFS= read -r domain; do
+  # Strip quotes and whitespace
+  domain=$(echo "$domain" | tr -d '"' | xargs)
+  [[ -z "$domain" ]] && continue
+
+  if [[ "$domain" == \** ]]; then
+    # Wildcard: *.birdcar.dev matches foo.birdcar.dev, bar.baz.birdcar.dev
+    suffix="${domain#\*.}"
+    if [[ "$HOSTNAME" == *".$suffix" ]]; then
+      ALLOWED=true
+      break
+    fi
+  else
+    # Exact match
+    if [[ "$HOSTNAME" == "$domain" ]]; then
+      ALLOWED=true
+      break
+    fi
+  fi
+done < <(grep -oP '"[^"]*\.[^"]*"' "$CONFIG")
+
+if [[ "$ALLOWED" != "true" ]]; then
+  echo "homelab-curl: domain '$HOSTNAME' not in allowed list ($CONFIG)" >&2
+  echo "Add it to the 'allowed' array in $CONFIG to permit access." >&2
+  exit 1
+fi
+
+# All checks passed — execute real curl
+exec curl "$@"
