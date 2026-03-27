@@ -34,6 +34,7 @@ services:
       - birdclaw-config:/home/node/.openclaw
       - birdclaw-workspace:/home/node/.openclaw/workspace
       - birdclaw-extensions:/home/node/.openclaw/extensions
+      - birdclaw-qmd-cache:/home/node/.cache/qmd
     group_add:
       - '983'
       - '987'
@@ -123,6 +124,7 @@ volumes:
   birdclaw-config:
   birdclaw-workspace:
   birdclaw-extensions:
+  birdclaw-qmd-cache:
   birdclaw-browser-data:
   birdclip-data:
   birdclip-pgdata:

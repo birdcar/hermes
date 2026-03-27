@@ -11,5 +11,15 @@ if [ ! -f "${CONFIG_FILE}" ]; then
   cp "${SEED_FILE}" "${CONFIG_FILE}"
 fi
 
+# Ensure qmd memory collection exists (survives restarts)
+if command -v qmd >/dev/null 2>&1; then
+  WORKSPACE="${CONFIG_DIR}/workspace"
+  if [ -d "${WORKSPACE}" ] && ! qmd status 2>/dev/null | grep -q "memory-root-main"; then
+    echo "[birdclaw] Initializing qmd memory collection"
+    qmd collection add "${WORKSPACE}" --name memory-root-main 2>/dev/null || true
+    qmd embed 2>/dev/null || true
+  fi
+fi
+
 # Chain to the upstream Node docker-entrypoint.sh
 exec docker-entrypoint.sh "$@"
