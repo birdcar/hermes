@@ -28,16 +28,7 @@
       "maxConcurrent": 4,
       "subagents": { "maxConcurrent": 8 },
       "sandbox": {
-        "mode": "non-main",
-        "backend": "docker",
-        "scope": "agent",
-        "workspaceAccess": "rw",
-        "docker": {
-          "readOnlyRoot": true,
-          "network": "none",
-          "capDrop": ["ALL"],
-          "user": "1000:1000"
-        }
+        "mode": "off"
       }
     }
   },
