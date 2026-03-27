@@ -90,7 +90,7 @@
         "maxResults": 6,
         "maxSnippetChars": 2000,
         "maxInjectedChars": 8000,
-        "timeoutMs": 4000
+        "timeoutMs": 15000
       }
     }
   },

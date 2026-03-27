@@ -10,7 +10,9 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
       > /etc/apt/sources.list.d/github-cli.list \
     && apt-get update \
-    && apt-get install -y --no-install-recommends gh jq ${EXTRA_APT_PACKAGES} \
+    && apt-get install -y --no-install-recommends gh jq \
+       libvulkan1 mesa-vulkan-drivers vulkan-tools \
+       ${EXTRA_APT_PACKAGES} \
     && rm -rf /var/lib/apt/lists/*
 
 # Install bun globally
