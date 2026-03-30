@@ -35,6 +35,7 @@ services:
       - birdclaw-workspace:/home/node/.openclaw/workspace
       - birdclaw-extensions:/home/node/.openclaw/extensions
       - birdclaw-qmd-cache:/home/node/.cache/qmd
+      - birdclaw-gh-config:/home/node/.config/gh
     group_add:
       - '983'
       - '987'
@@ -91,6 +92,7 @@ services:
       - PORT=3100
     volumes:
       - birdclip-data:/paperclip
+      - birdclip-gh-config:/paperclip/.config/gh
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://127.0.0.1:3100/health"]
       interval: 10s
@@ -125,4 +127,6 @@ volumes:
   birdclaw-qmd-cache:
   birdclaw-browser-data:
   birdclip-data:
+  birdclaw-gh-config:
+  birdclip-gh-config:
   birdclip-pgdata:

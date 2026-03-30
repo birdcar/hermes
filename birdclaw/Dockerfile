@@ -32,7 +32,8 @@ RUN mkdir -p /home/node/.openclaw/extensions \
              /home/node/.openclaw/workspace \
              /home/node/.openclaw/media \
              /home/node/.openclaw/skills \
-    && chown -R node:node /home/node/.openclaw
+             /home/node/.config/gh \
+    && chown -R node:node /home/node/.openclaw /home/node/.config
 
 # Copy seed config (used on first run only)
 COPY --chown=node:node openclaw.json /home/node/.openclaw.seed/openclaw.json

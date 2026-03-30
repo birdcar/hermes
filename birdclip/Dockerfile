@@ -18,9 +18,24 @@ RUN test -f server/dist/index.js || (echo "ERROR: server build output missing" &
 FROM base AS production
 WORKDIR /app
 COPY --chown=node:node --from=build /app /app
+
+# Install gh CLI
+RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+      | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+      > /etc/apt/sources.list.d/github-cli.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends gh \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install bun globally
+RUN curl -fsSL https://bun.sh/install | bash \
+    && mv /root/.bun /usr/local/bun
+ENV PATH="/usr/local/bun/bin:${PATH}"
+
 RUN npm install --global --omit=dev @anthropic-ai/claude-code@latest @openai/codex@latest opencode-ai \
-  && mkdir -p /paperclip \
-  && chown node:node /paperclip
+  && mkdir -p /paperclip /paperclip/.config/gh \
+  && chown -R node:node /paperclip
 
 ENV NODE_ENV=production \
   HOME=/paperclip \
